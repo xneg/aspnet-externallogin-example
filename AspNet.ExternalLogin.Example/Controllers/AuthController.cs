@@ -34,9 +34,11 @@ namespace AspNet.ExternalLogin.Example.Controllers
         [Route("signout")]
         public async Task<IActionResult> SignOut()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+//            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await HttpContext.SignOutAsync();
+            await _signInManager.SignOutAsync();
             return RedirectToAction("SignIn");
-            //return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]

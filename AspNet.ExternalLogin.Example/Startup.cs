@@ -42,7 +42,8 @@ namespace AspNet.ExternalLogin.Example
                     options.Password.RequireUppercase = false;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            
+
+            services.ConfigureApplicationCookie(o => { o.LoginPath = "/auth/signin/"; });
             services.AddAuthentication()
                 .AddGitHub(options =>
                 {
