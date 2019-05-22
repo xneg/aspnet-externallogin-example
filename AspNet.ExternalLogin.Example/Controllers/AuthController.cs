@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.ExternalLogin.Example.Controllers
 {
+    //без атрибута не работает, потому что внутри методы тоже используют атрибуты
+    [Route("auth")]
     public class AuthController : Controller
     {
         private readonly SignInManager<IdentityUser> _signInManager;
