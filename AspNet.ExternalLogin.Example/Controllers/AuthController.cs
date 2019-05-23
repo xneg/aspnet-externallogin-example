@@ -46,7 +46,7 @@ namespace AspNet.ExternalLogin.Example.Controllers
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
         {
             var info = await _signInManager.GetExternalLoginInfoAsync();
-            
+
             //var user = new IdentityUser("testUser");
             var tryLogin = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: true);
 

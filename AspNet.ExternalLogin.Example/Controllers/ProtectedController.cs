@@ -7,9 +7,7 @@ namespace ExternalAuth.Controllers
     {
 //        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Policy = "Admin")]
 //        [Authorize(Roles = "admin")]
-//        [Authorize(AuthenticationSchemes = IdentityConstants.ExternalScheme)]
-//        [Authorize(AuthenticationSchemes = "Identity.External")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Identity.Application")]
         public JsonResult Index()
         {
             return new JsonResult(new {result = "success"});
