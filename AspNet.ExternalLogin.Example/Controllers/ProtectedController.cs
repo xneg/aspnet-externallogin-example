@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ExternalAuth.Controllers
+namespace AspNet.ExternalLogin.Example.Controllers
 {
     public class ProtectedController : Controller
     {
-//        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Policy = "Admin")]
-//        [Authorize(Roles = "admin")]
-        [Authorize(AuthenticationSchemes = "Identity.Application")]
+        [Authorize(AuthenticationSchemes = "Identity.Application", Roles = "Admin")]
         public JsonResult Index()
         {
             return new JsonResult(new {result = "success"});

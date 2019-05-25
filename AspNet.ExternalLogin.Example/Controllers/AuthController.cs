@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +33,6 @@ namespace AspNet.ExternalLogin.Example.Controllers
         [Route("signout")]
         public async Task<IActionResult> SignOut()
         {
-//            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
             await HttpContext.SignOutAsync();
             await _signInManager.SignOutAsync();
@@ -47,20 +45,18 @@ namespace AspNet.ExternalLogin.Example.Controllers
         {
             var info = await _signInManager.GetExternalLoginInfoAsync();
 
-            //var user = new IdentityUser("testUser");
             var tryLogin = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: true);
 
             if (!tryLogin.Succeeded)
             {
-//                var user = await _userManager.Users.FirstAsync(u => u.UserName == "xneg");
                 var user = new IdentityUser
                 {
-                    UserName = info.Principal.Identity.Name
+                    UserName = info.Principal.Identity.Name,
                 };
                 await _userManager.CreateAsync(user);
-
-                var x = await _userManager.AddLoginAsync(user, info);
-                var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: true);
+                await _userManager.AddToRoleAsync(user, "admin");
+                await _userManager.AddLoginAsync(user, info);
+                await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: true);
             }
 
             if (returnUrl != null) 
@@ -74,39 +70,23 @@ namespace AspNet.ExternalLogin.Example.Controllers
 //                await _signInManager.SignInAsync(user, props, info.LoginProvider);
 //            }
             return Ok();
-//            if (remoteError != null)
-//            {
-//                ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
-//                return View(nameof(Login));
-//            }
-//            if (info == null)
-//            {
-//                return RedirectToAction(nameof(Login));
-//            }
-//
-//            // Sign in the user with this external login provider if the user already has a login.
-//            if (result.Succeeded)
-//            {
-//                _logger.LogInformation(5, "User logged in with {Name} provider.", info.LoginProvider);
-//                return RedirectToLocal(returnUrl);
-//            }
-//            if (result.RequiresTwoFactor)
-//            {
-//                return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl });
-//            }
-//            if (result.IsLockedOut)
-//            {
-//                return View("Lockout");
-//            }
-//            else
-//            {
-//                // If the user does not have an account, then ask the user to create an account.
-//                ViewData["ReturnUrl"] = returnUrl;
-//                ViewData["LoginProvider"] = info.LoginProvider;
-//                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-//                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = email });
-//            }
         }
 
+        [HttpPost]
+        [Route("setuserrole")]
+        public async Task<IActionResult> SetUserRole(string userName, string role)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+
+            if (user == null) 
+                return BadRequest();
+            
+            if (await _userManager.IsInRoleAsync(user, role))
+                return Ok();
+
+            await _userManager.AddToRoleAsync(user, role);
+
+            return Ok();
+        }
     }
 }
