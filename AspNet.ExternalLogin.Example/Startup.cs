@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AspNet.ExternalLogin.Example.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -43,11 +44,19 @@ namespace AspNet.ExternalLogin.Example
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             
-            services.AddAuthentication()
+            services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                })
                 .AddGitHub(options =>
                 {
                     options.ClientId = Environment.GetEnvironmentVariable("GITHUB_ID");
                     options.ClientSecret = Environment.GetEnvironmentVariable("GITHUB_SECRET");
+                })
+                .AddCookie(options => {
+                    options.LoginPath = "/auth/signin";
                 });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
