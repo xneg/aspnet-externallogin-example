@@ -5,7 +5,7 @@ namespace ExternalAuth.Controllers
 {
     public class ProtectedController : Controller
     {
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Identity.External")]
         public JsonResult Index()
         {
             return new JsonResult(new {result = "success"});

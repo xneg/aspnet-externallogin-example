@@ -54,11 +54,14 @@ namespace AspNet.ExternalLogin.Example
                 {
                     options.ClientId = Environment.GetEnvironmentVariable("GITHUB_ID");
                     options.ClientSecret = Environment.GetEnvironmentVariable("GITHUB_SECRET");
-                })
-                .AddCookie(options => {
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
+                });
+            
+            services.ConfigureExternalCookie(options =>
+                {
                     options.LoginPath = "/auth/signin";
                 });
-
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
